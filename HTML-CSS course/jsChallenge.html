@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JS Challenge</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
+  <style>
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      margin: 0px;
+    }
+    body {
+      background: linear-gradient(
+        45deg,
+        rgb(94, 24, 97),
+        rgb(87, 11, 60),
+        rgb(240, 238, 238),
+        rgb(122, 47, 81)
+      );
+    }
+    #user {
+      background-color: white;
+      border-radius: 100px;
+      padding: 10px;
+      font-size: 20px;
+      font-family: Arial, Helvetica, sans-serif;
+      padding-left: 20px;
+      box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      margin-top: 15px;
+    }
+    #user.selected {
+      border: solid orange 6px;
+    }
+    #post {
+      background-color: white;
+      border-radius: 10px;
+      font-size: 20px;
+      padding: 10px;
+      box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+      margin-top: 15px;
+    }
+  </style>
+  <body>
+    <div id="content" style="display: flex">
+      <!-- users cont -->
+      <div style="width: 30%; height: 100px">
+        <div id="users" style="width: 90%; margin: 0 auto; height: 100px">
+          <div id="user" class="selected">
+            <h3>Sondos</h3>
+            <h3>Sondos@gmail.com</h3>
+          </div>
+          <div id="user">
+            <h3>Sondos</h3>
+            <h3>Sondos@gmail.com</h3>
+          </div>
+          <div id="user">
+            <h3>Sondos</h3>
+            <h3>Sondos@gmail.com</h3>
+          </div>
+          <div id="user">
+            <h3>Sondos</h3>
+            <h3>Sondos@gmail.com</h3>
+          </div>
+        </div>
+      </div>
+      <!-- // users cont// -->
+      <!-- posts container -->
+      <div
+        id="posts-cont"
+        style="width: 70%; background-color: white; padding: 20px 0px"
+      >
+        <div id="posts" style="width: 90%; margin: 0 auto">
+          <!-- post -->
+          <div id="post">
+            <h3>hello world</h3>
+            <h4>
+              Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+              Reprehenderit quia adipisci totam incidunt sequi et, similique est
+              nulla consequatur praesentium ipsa necessitatibus eveniet
+              corporis. Ipsum corrupti facilis provident possimus et?
+            </h4>
+          </div>
+          <!--// post //-->
+          <!-- post -->
+          <div id="post">
+            <h3>hello world</h3>
+            <h4>
+              Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+              Reprehenderit quia adipisci totam incidunt sequi et, similique est
+              nulla consequatur praesentium ipsa necessitatibus eveniet
+              corporis. Ipsum corrupti facilis provident possimus et?
+            </h4>
+          </div>
+          <!--// post //-->
+          <!-- post -->
+          <div id="post">
+            <h3>hello world</h3>
+            <h4>
+              Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+              Reprehenderit quia adipisci totam incidunt sequi et, similique est
+              nulla consequatur praesentium ipsa necessitatibus eveniet
+              corporis. Ipsum corrupti facilis provident possimus et?
+            </h4>
+          </div>
+          <!--// post //-->
+        </div>
+      </div>
+      <!-- //posts container// -->
+    </div>
+  </body>
+  <script>
+    function getUsersusingAXIOS() {
+      return new Promise((resolve, reject) => {
+        axios
+          .get("https://jsonplaceholder.typicode.com/users")
+          .then((response) => {
+            let users = response.data;
+            document.getElementById("users").innerHTML = "";
+            for (user of users) {
+              let content = `
+    <div id="user" onclick="userClicked(${user.id},this)">
+        <h3>${user.name}</h3>
+        <h3>${user.email}</h3>
+    </div>
+            `;
+              document.getElementById("users").innerHTML += content;
+            }
+            resolve();
+          })
+          .catch((error) => {
+            alert(error);
+          });
+      });
+    }
+    function getpostsOfusers(userId) {
+      let url = "https://jsonplaceholder.typicode.com/posts?userId=" + userId;
+      axios
+        .get(url)
+        .then((response) => {
+          let posts = response.data;
+          document.getElementById("posts").innerHTML = "";
+          for (post of posts) {
+            let content = `
+    <div id="post">
+        <h3>${post.title}</h3>
+        <h4>${post.body}</h4>
+    </div>
+            `;
+            document.getElementById("posts").innerHTML += content;
+          }
+        })
+        .catch((error) => {
+          alert(error);
+        });
+    }
+    function userClicked(id, el) {
+      getpostsOfusers(id);
+      let selectedElements = document.getElementsByClassName("selected");
+      for (element of selectedElements) {
+        element.classList.remove("selected");
+      }
+      el.classList.add("selected");
+    }
+    getUsersusingAXIOS().then(() => {
+      getpostsOfusers(1);
+    });
+
+    // function getusers() {
+    //   return new Promise((resolve, reject) => {
+    //     fetch("https://jsonplaceholder.typicode.com/users")
+    //       .then((response) => {
+    //         if (response.ok) {
+    //           return response.json();
+    //         }
+    //       })
+    //       .then((users) => {
+    //         document.getElementById("users").innerHTML = "";
+    //         for (user of users) {
+    //           let content = `
+    // <div id="user" onclick="userClicked(${user.id},this)">
+    //     <h3>${user.name}</h3>
+    //     <h3>${user.email}</h3>
+    // </div>
+    //         `;
+    //           document.getElementById("users").innerHTML += content;
+    //         }
+    //       });
+    //   });
+    // }
+
+    // function getposts(userId) {
+    //   fetch("https://jsonplaceholder.typicode.com/posts?userId=" + userId)
+    //     .then((response) => {
+    //       if (response.ok) {
+    //         return response.json();
+    //       } else {
+    //         reject("ERROR with Users req");
+    //       }
+    //     })
+    //     .then((posts) => {
+    //       document.getElementById("posts").innerHTML = "";
+    //       for (post of posts) {
+    //         let content = `
+    // <div id="post">
+    //     <h3>${post.title}</h3>
+    //     <h4>${post.body}</h4>
+    // </div>
+    //         `;
+    //         document.getElementById("posts").innerHTML += content;
+    //       }
+    //       resolve();
+    //     });
+    // }
+
+    // function getposts(userId) {
+    //   let req = new XMLHttpRequest();
+    //   req.open(
+    //     "GET",
+    //     "https://jsonplaceholder.typicode.com/posts?userId=" + userId
+    //   );
+    //   req.responseType = "json";
+    //   req.send();
+    //   req.onload = function () {
+    //     if (req.status >= 200 && req.status < 300) {
+    //       let posts = req.response;
+    //       document.getElementById("posts").innerHTML = "";
+    //       for (post of posts) {
+    //         let content = `
+    // <div id="post">
+    //     <h3>${post.title}</h3>
+    //     <h4>${post.body}</h4>
+    // </div>
+    //         `;
+    //         document.getElementById("posts").innerHTML += content;
+    //       }
+    //     } else {
+    //       alert("ERROR");
+    //     }
+    //   };
+    // }
+
+    // function getusers() {
+    //   let req = new XMLHttpRequest();
+    //   req.open("GET", "https://jsonplaceholder.typicode.com/users");
+    //   req.responseType = "json";
+    //   req.send();
+    //   req.onload = function () {
+    //     if (req.status >= 200 && req.status < 300) {
+    //       let users = req.response;
+    //       document.getElementById("users").innerHTML = "";
+    //       for (user of users) {
+    //         let content = `
+    // <div id="user" onclick="userClicked(${user.id},this)">
+    //     <h3>${user.name}</h3>
+    //     <h3>${user.email}</h3>
+    // </div>
+    //         `;
+    //         document.getElementById("users").innerHTML += content;
+    //       }
+    //     } else {
+    //       alert("ERROR");
+    //     }
+    //   };
+    // }
+
+    // getusers()
+    //   .then(() => {
+    //     getposts(1);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
+  </script>
+</html>
